@@ -18,12 +18,16 @@ class Slybroadcast
 
     protected $httpClient;
 
-    public $username;
-    public $password;
+    public $USER_EMAIL;
+    public $PASSWORD;
 
-    public function __construct($uid,$pass)
+    public function __construct($config)
     {
-        $this->setCredentials($uid,$pass);
+        foreach ($config as $key => $value)
+        {
+            $this->{$key} = $value;
+        }
+
         $this->httpClient = new Client([
             'base_uri' => self::BASE_URI,
             'timeout' => 10
@@ -32,15 +36,13 @@ class Slybroadcast
 
     public function setCredentials($uid,$pass)
     {
-        $this->username = $uid;
-        $this->password = $pass;
+        $this->USER_EMAIL = $uid;
+        $this->PASSWORD = $pass;
         return $this;
     }
 
     public function sendVoiceMail($postdata)
     {
-        $postdata['c_uid'] = $this->username;
-        $postdata['c_password'] = $this->password;
         $this->apiCall('POST','vmb.php',$postdata);
         return $this;
     }
@@ -49,8 +51,6 @@ class Slybroadcast
     {
         $postdata['c_option'] = 'pause';
         $postdata['session_id'] = $session_id;
-        $postdata['c_uid'] = $this->username;
-        $postdata['c_password'] = $this->password;
 
         $this->apiCall('POST','vmb.php',$postdata);
         return $this;
@@ -60,8 +60,7 @@ class Slybroadcast
     {
         $postdata['c_option'] = 'run';
         $postdata['session_id'] = $session_id;
-        $postdata['c_uid'] = $this->username;
-        $postdata['c_password'] = $this->password;
+
 
         $this->apiCall('POST','vmb.php',$postdata);
         return $this;
@@ -70,8 +69,6 @@ class Slybroadcast
     public function accountMessageBalance()
     {
         $postdata['remain_message'] = '1';
-        $postdata['c_uid'] = $this->username;
-        $postdata['c_password'] = $this->password;
         $this->apiCall('POST','vmb.php',$postdata);
         return $this;
     }
@@ -81,8 +78,6 @@ class Slybroadcast
     public function listAudioFiles()
     {
         $postdata['c_method'] = 'get_audio_list';
-        $postdata['c_uid'] = $this->username;
-        $postdata['c_password'] = $this->password;
 
         $this->apiCall('POST','vmb.aflist.php',$postdata);
         $this->parseAudioResponse();
@@ -109,8 +104,8 @@ class Slybroadcast
         // POST REQUEST
         if(!empty($postdata))
         {
-            $postdata['c_uid'] = $this->username;
-            $postdata['c_password'] = $this->password;
+            $postdata['c_uid'] = $this->USER_EMAIL;
+            $postdata['c_password'] = $this->PASSWORD;
             $params['form_params'] = $postdata;
 
             $params['headers'] = [

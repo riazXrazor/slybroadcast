@@ -41,7 +41,11 @@ class SlybroadcastServiceProvider extends ServiceProvider
                 throw new \RuntimeException('missing slybroadcast configuration: `PASSWORD`');
             }
 
-            return new Slybroadcast($config['USER_EMAIL'],$config['PASSWORD']);
+            if(!isset($config['DEBUG'])){
+                throw new \RuntimeException('missing slybroadcast configuration: `DEBUG`');
+            }
+
+            return new Slybroadcast($config);
         });
 
         $this->app->alias(Slybroadcast::class, 'slybroadcast-api');
