@@ -94,6 +94,7 @@ class Slybroadcast
     {
         $postdata['remain_message'] = '1';
         $this->apiCall('POST','vmb.php',$postdata);
+        $this->parseKeyValueResponse();
         return $this;
     }
 
@@ -181,11 +182,12 @@ class Slybroadcast
         {
             foreach ($this->responseData as $key => $value)
             {
+
                 if(strpos($value,'|') != FALSE)
                 {
                     $t = explode('|',$value);
                     $arr = [
-                        'session_id' => $t[0],
+                        'session_id' => explode('=',$t[0])[1],
                         'phone_no' => $t[1],
                         'status' => $t[2],
                         'failure_reason' => $t[3],
@@ -267,7 +269,7 @@ class Slybroadcast
                 {
                     if(strpos($value,':') != FALSE) {
                         $v = explode(':', $value);
-                        $arr[$v[0]] = $v[1];
+                        $arr['errors'][$v[0]] = $v[1];
                     }
                     else
                     {
