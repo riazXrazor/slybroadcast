@@ -8,7 +8,7 @@ class Slybroadcast
 {
     const BASE_URI = 'https://www.mobile-sphere.com/gateway/';
 
-    public $DEBUG = true;
+    public $DEBUG = false;
     // GuzzleHttp client for making http requests
     /**
      * Guzzle response
