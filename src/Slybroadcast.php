@@ -66,6 +66,30 @@ class Slybroadcast
         return $this;
     }
 
+    public function stop($session_id)
+    {
+        $postdata['c_option'] = 'stop';
+        $postdata['session_id'] = $session_id;
+
+
+        $this->apiCall('POST','vmb.php',$postdata);
+        return $this;
+    }
+
+    public function callStatus($session_id,$phone)
+    {
+        $postdata['c_option'] = 'callstatus';
+        $postdata['c_phone'] = $phone;
+        $postdata['session_id'] = $session_id;
+
+
+        $this->apiCall('POST','vmb.php',$postdata);
+        $this->parseCallStatusResponse();
+        return $this;
+    }
+
+
+
     public function accountMessageBalance()
     {
         $postdata['remain_message'] = '1';
@@ -141,6 +165,37 @@ class Slybroadcast
         $this->parseResponse();
     }
 
+    private function parseCallStatusResponse()
+    {
+        //$this->responseData = explode("\n",$this->responseData);
+        $tmp = $this->responseData;
+        $arr = [];
+        if(!empty($this->responseData))
+        {
+            foreach ($this->responseData as $key => $value)
+            {
+                if(strpos($value,'|') != FALSE)
+                {
+                    $t = explode('|',$value);
+                    $arr = [
+                        'session_id' => $t[0],
+                        'phone_no' => $t[1],
+                        'status' => $t[2],
+                        'failure_reason' => $t[3],
+                        'delivery_date_time' => $t[4],
+                        'carrier' => $t[5]
+                    ];
+                }
+            }
+            if(!empty($arr))
+            {
+                $this->responseData = $arr;
+            }
+
+        }
+
+    }
+
     private function parseAudioResponse()
     {
         //$this->responseData = explode("\n",$this->responseData);
@@ -153,7 +208,12 @@ class Slybroadcast
                 if(strpos($value,'|') != FALSE)
                 {
                     $t = explode('|',$value);
-                    $arr[] = $t;
+                    $arr[] = [
+                        'system_file_name' => $t[0],
+                        'user_file_name' => $t[1],
+                        'creation_time' => $t[2],
+                        'duration' => $t[3] ?? ''
+                    ];
                 }
             }
             if(!empty($arr))
@@ -168,6 +228,56 @@ class Slybroadcast
     private function parseResponse()
     {
         $this->responseData = explode("\n",$this->responseData);
+
+        if($this->responseData[0] == 'ERROR')
+        {
+            $this->parseStatusResponse();
+        }
+        else if($this->responseData[0] == 'OK')
+        {
+            $this->parseStatusResponse();
+        }
+    }
+
+    private function parseStatusResponse()
+    {
+        $tmp = $this->responseData;
+        $arr = [];
+        if(!empty($this->responseData))
+        {
+            foreach ($this->responseData as $key => $value)
+            {
+                if(empty($value))
+                {
+                    continue;
+                }
+
+                if($key == 0)
+                {
+                    $arr['status'] = $value;
+                }
+                else
+                {
+                    if(strpos($value,':') != FALSE) {
+                        $v = explode(':', $value);
+                        $arr[$v[0]] = $v[1];
+                    }
+                    else
+                    {
+                        $arr['message'] = $value;
+                    }
+                }
+            }
+            if(!empty($arr))
+            {
+                $this->responseData = $arr;
+            }
+
+        }
+    }
+
+    private function parseKeyValueResponse()
+    {
         $tmp = $this->responseData;
         $arr = [];
         if(!empty($this->responseData))
@@ -186,6 +296,5 @@ class Slybroadcast
             }
 
         }
-
     }
 }
