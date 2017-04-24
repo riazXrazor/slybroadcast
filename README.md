@@ -3,7 +3,7 @@ Laravel wrapper for Slybroadcast api integration voice messaging for business.
 
 # Api Documentation
 For documentation on the api please refer to https://www.mobile-sphere.com/vmb2/MobileSphere_slybroadcast_API_v2.0.pdf
-for register nad login visit http://www.slybroadcast.com/
+for register and login visit http://www.slybroadcast.com/
 
 ## Installation
 
