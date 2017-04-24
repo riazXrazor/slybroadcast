@@ -70,15 +70,15 @@ You can use the function like this.
                                 'c_callerID' => "18442305060",
                                 'mobile_only' => 1,
                                 'c_dispo_url' => 'https://2e2fe124.ngrok.io/voicepostback'
-                               ]);
+                               ])->getResponse();
                                
-\Slybroadcast::pause($session_id)
+\Slybroadcast::pause($session_id)->getResponse();
 
-\Slybroadcast::resume($session_id);
+\Slybroadcast::resume($session_id)->getResponse();
  
-\Slybroadcast::accountMessageBalance()
+\Slybroadcast::accountMessageBalance()->getResponse();
 
-\Slybroadcast::listAudioFiles()
+\Slybroadcast::listAudioFiles()->getResponse();
 
 // if you wana user different credentials for api call
 \Slybroadcast::setCredentials($user_email,$password);                               
