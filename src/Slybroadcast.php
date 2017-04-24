@@ -108,6 +108,13 @@ class Slybroadcast
         return $this;
     }
 
+    public function downloadAudioFile($audio_code)
+    {
+        $postdata['c_audio_code'] = $audio_code;
+        $this->apiCall('POST','vmb.dla.php',$postdata);
+        return $this;
+    }
+
     public function getResponse()
     {
         return $this->responseData;
